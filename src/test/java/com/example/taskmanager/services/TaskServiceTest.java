@@ -64,4 +64,15 @@ class TaskServiceTest {
         verify(taskRepository, times(1)).save(task1);
     }
 
+    @Test
+    void testUpdateTask() {
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task1));
+        when(taskRepository.save(any(Task.class))).thenReturn(task1);
+
+        Task updatedTask = taskService.updateTask(1L, new Task(null, "Task Updated", "New description", true));
+
+        assertNotNull(updatedTask);
+        assertEquals("Task Updated", updatedTask.getTitle());
+    }
+
 }
