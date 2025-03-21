@@ -75,4 +75,13 @@ class TaskServiceTest {
         assertEquals("Task Updated", updatedTask.getTitle());
     }
 
+    @Test
+    void testDeleteTask() {
+        doNothing().when(taskRepository).deleteById(1L);
+
+        taskService.deleteTask(1L);
+
+        verify(taskRepository, times(1)).deleteById(1L);
+    }
+
 }
