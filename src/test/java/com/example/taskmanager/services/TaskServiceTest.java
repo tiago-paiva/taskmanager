@@ -32,4 +32,15 @@ class TaskServiceTest {
         task1 = new Task(1L, "Task 1", "Description 1", false);
         task2 = new Task(2L, "Task 2", "Description 2", true);
     }
+
+    @Test
+    void testGetAllTasks() {
+        when(taskRepository.findAll()).thenReturn(Arrays.asList(task1, task2));
+
+        List<Task> tasks = taskService.getAllTasks();
+
+        assertEquals(2, tasks.size());
+        verify(taskRepository, times(1)).findAll();
+    }
+
 }
