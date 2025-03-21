@@ -53,4 +53,15 @@ class TaskServiceTest {
         assertEquals("Task 1", foundTask.get().getTitle());
     }
 
+    @Test
+    void testCreateTask() {
+        when(taskRepository.save(task1)).thenReturn(task1);
+
+        Task createdTask = taskService.createTask(task1);
+
+        assertNotNull(createdTask);
+        assertEquals("Task 1", createdTask.getTitle());
+        verify(taskRepository, times(1)).save(task1);
+    }
+
 }
