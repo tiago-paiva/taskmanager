@@ -25,17 +25,16 @@ class TaskServiceTest {
     @InjectMocks
     private TaskService taskService;
 
-    private Task task1, task2;
+    private Task exempleTask;
 
     @BeforeEach
     void setUp() {
-        task1 = new Task(1L, "Task 1", "Description 1", false);
-        task2 = new Task(2L, "Task 2", "Description 2", true);
+        exempleTask = new Task(1L, "taskTitle", "taskDescription", false);
     }
 
     @Test
     void testGetAllTasks() {
-        when(taskRepository.findAll()).thenReturn(Arrays.asList(task1, task2));
+        when(taskRepository.findAll()).thenReturn(Arrays.asList(exempleTask, exempleTask));
 
         List<Task> tasks = taskService.getAllTasks();
 
@@ -45,43 +44,54 @@ class TaskServiceTest {
 
     @Test
     void testGetTaskById() {
-        when(taskRepository.findById(1L)).thenReturn(Optional.of(task1));
+        long taskId = exempleTask.getId();
 
-        Optional<Task> foundTask = taskService.getTaskById(1L);
+        when(taskRepository.findById(taskId)).thenReturn(Optional.of(exempleTask));
+
+        Optional<Task> foundTask = taskService.getTaskById(taskId);
 
         assertTrue(foundTask.isPresent());
-        assertEquals("Task 1", foundTask.get().getTitle());
+        assertEquals(exempleTask.getTitle(), foundTask.get().getTitle());
+        verify(taskRepository, times(1)).findById(taskId);
     }
 
     @Test
     void testCreateTask() {
-        when(taskRepository.save(task1)).thenReturn(task1);
+        when(taskRepository.save(exempleTask)).thenReturn(exempleTask);
 
-        Task createdTask = taskService.createTask(task1);
+        Task createdTask = taskService.createTask(exempleTask);
 
         assertNotNull(createdTask);
-        assertEquals("Task 1", createdTask.getTitle());
-        verify(taskRepository, times(1)).save(task1);
+        assertEquals(exempleTask.getTitle(), createdTask.getTitle());
+        verify(taskRepository, times(1)).save(exempleTask);
     }
 
     @Test
     void testUpdateTask() {
-        when(taskRepository.findById(1L)).thenReturn(Optional.of(task1));
-        when(taskRepository.save(any(Task.class))).thenReturn(task1);
+        long taskId = exempleTask.getId();
+        String newTaskTitle = "Task Updated";
+        String newTaskDescription = "New description";
 
-        Task updatedTask = taskService.updateTask(1L, new Task(null, "Task Updated", "New description", true));
+        when(taskRepository.findById(taskId)).thenReturn(Optional.of(exempleTask));
+        when(taskRepository.save(any(Task.class))).thenReturn(exempleTask);
+
+        Task updatedTask = taskService.updateTask(taskId, new Task(null, newTaskTitle, newTaskDescription, true));
 
         assertNotNull(updatedTask);
-        assertEquals("Task Updated", updatedTask.getTitle());
+        assertEquals(newTaskTitle, updatedTask.getTitle());
+        assertEquals(newTaskDescription, updatedTask.getDescription());
+        verify(taskRepository, times(1)).findById(taskId);
     }
 
     @Test
     void testDeleteTask() {
-        doNothing().when(taskRepository).deleteById(1L);
+        long taskId = exempleTask.getId();
 
-        taskService.deleteTask(1L);
+        doNothing().when(taskRepository).deleteById(taskId);
 
-        verify(taskRepository, times(1)).deleteById(1L);
+        taskService.deleteTask(taskId);
+
+        verify(taskRepository, times(1)).deleteById(taskId);
     }
 
 }
