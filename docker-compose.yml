@@ -1,0 +1,40 @@
+services:
+  postgres_db:    # ${DB_HOST}
+    image: postgres:latest
+    container_name: ${DB_NAME}
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - private_network
+
+  app:
+    build: .
+    container_name: taskmanager_app
+    depends_on:
+      - postgres_db
+    environment:
+      SPRING_DATASOURCE_HOST: ${DB_HOST}
+      SPRING_DATASOURCE_PORT: ${DB_PORT}
+      SPRING_DATASOURCE_NAME: ${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      - private_network
+      - public_network
+
+volumes:
+  pgdata:
+
+networks:
+  private_network:
+    driver: bridge
+  public_network:
+    driver: bridge
