@@ -1,11 +1,11 @@
 services:
-  postgres:
+  postgres_db:    # ${DB_HOST}
     image: postgres:latest
-    container_name: postgres
+    container_name: ${DB_NAME}
     environment:
-      POSTGRES_DB: taskmanager
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -15,13 +15,15 @@ services:
 
   app:
     build: .
-    container_name: tm-ctn
+    container_name: taskmanager_app
     depends_on:
-      - postgres
+      - postgres_db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/taskmanager
-      SPRING_DATASOURCE_USERNAME: admin
-      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_HOST: ${DB_HOST}
+      SPRING_DATASOURCE_PORT: ${DB_PORT}
+      SPRING_DATASOURCE_NAME: ${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
     ports:
       - "8080:8080"
     networks:

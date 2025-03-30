@@ -3,10 +3,10 @@ spring:
     name: taskmanager
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/taskmanager
+    url: jdbc:postgresql://${SPRING_DATASOURCE_HOST}:${SPRING_DATASOURCE_PORT}/${SPRING_DATASOURCE_NAME}
     driverClassName: org.postgresql.Driver
-    username: admin
-    password: admin
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
